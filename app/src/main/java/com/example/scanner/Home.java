@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,24 +16,55 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-public class Home extends AppCompatActivity implements View.OnClickListener{
+import java.util.Calendar;
+import java.util.Date;
 
+public class Home extends AppCompatActivity {
+    // get current time with Calendar library
+    static Date currentTime = Calendar.getInstance().getTime();
+    // set up variables
+    public static String date = currentTime.toString();
     public static int scanCount = 0;
+    static double PRICE = 0.1;
+    public static double total = scanCount * PRICE;
+    // array to hold all the scanned items
+    public static String[] scannedItems = new String[100];
+    // set up variables for input and display
     Button scanButton;
+    Button emailButton;
+    TextView dateLabel;
+    TextView itemsScannedLabel;
+    TextView totalEarnedLabel;
+    EditText customerNameEditText;
+    EditText employeeNameEditText;
+    EditText emailEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Log.d("Status", date);
 
+        // set up text view label
+        dateLabel = findViewById(R.id.dateLabel);
+        dateLabel.setText(date);
+        itemsScannedLabel = findViewById(R.id.itemsScannedLabel);
+        itemsScannedLabel.setText(String.valueOf(scanCount));
+        totalEarnedLabel = findViewById(R.id.totalEarnedLabel);
+        totalEarnedLabel.setText(String.format("$ %s", total));
+        // set up buttons
         scanButton = findViewById(R.id.scanButton);
-        scanButton.setOnClickListener(this);
+        scanButton.setOnClickListener(this::onClickScan);
+        emailButton = findViewById(R.id.emailButton);
+        emailButton.setOnClickListener(this::onClickEmail);
     }
 
-    @Override
-    public void onClick(View v) {
-        Log.d("State", "string");
+    public void onClickScan(View v) {
         scanCode();
+    }
+
+    public void onClickEmail(View v) {
+        Log.d("Status", "Email Clicked!");
     }
 
     private void scanCode() {

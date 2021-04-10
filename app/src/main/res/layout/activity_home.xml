@@ -20,22 +20,31 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/dateLabel"
         android:layout_width="180dp"
         android:layout_height="50dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:textColor="@color/white"
-        android:text=""
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/dateTextView"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/purple_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
 
     <TextView
         android:id="@+id/customerNameTextView"
         android:layout_width="160dp"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="64dp"
         android:text="@string/customerName"
         android:textColor="@color/white"
         android:textSize="20sp"
@@ -43,18 +52,18 @@
         app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/editTextCustomerName"
         android:layout_width="180dp"
         android:layout_height="50dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="44dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:textColor="@color/white"
         android:text=""
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toEndOf="@+id/customerNameTextView"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/dateLabel" />
 
     <TextView
         android:id="@+id/employeeNameTextView"
@@ -69,18 +78,18 @@
         app:layout_constraintTop_toBottomOf="@+id/customerNameTextView" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName4"
+        android:id="@+id/editTextEmployeeName"
         android:layout_width="180dp"
-        android:textColor="@color/white"
         android:layout_height="50dp"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text=""
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toEndOf="@+id/employeeNameTextView"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextCustomerName" />
 
     <TextView
         android:id="@+id/itemsScannedTextView"
@@ -95,6 +104,20 @@
         app:layout_constraintTop_toBottomOf="@+id/employeeNameTextView" />
 
     <TextView
+        android:id="@+id/itemsScannedLabel"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginStart="44dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintStart_toEndOf="@+id/itemsScannedTextView"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEmployeeName" />
+
+    <TextView
         android:id="@+id/totalEarnedTextView"
         android:layout_width="160dp"
         android:layout_height="50dp"
@@ -105,6 +128,20 @@
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemsScannedTextView" />
+
+    <TextView
+        android:id="@+id/totalEarnedLabel"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="44dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintStart_toEndOf="@+id/totalEarnedTextView"
+        app:layout_constraintTop_toBottomOf="@+id/itemsScannedLabel" />
 
     <TextView
         android:id="@+id/emailTextView"
@@ -122,14 +159,14 @@
         android:id="@+id/editTextTextEmailAddress"
         android:layout_width="180dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="244dp"
+        android:layout_marginTop="40dp"
         android:ems="10"
-        android:textColor="@color/white"
         android:inputType="textEmailAddress"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.51"
-        app:layout_constraintStart_toEndOf="@+id/emailTextView" />
+        app:layout_constraintStart_toEndOf="@+id/emailTextView"
+        app:layout_constraintTop_toBottomOf="@+id/totalEarnedLabel" />
 
     <Button
         android:id="@+id/scanButton"
