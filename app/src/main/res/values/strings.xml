@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">Scanner</string>
-
+    <string name="ampersand">&amp;</string>
+    <string name="E">E</string>
+    <string name="R">R</string>
+    <string name="scan">Scan</string>
+    <string name="start">Start</string>
+    <string name="emailAddress">Email:</string>
+    <string name="email">Email</string>
+    <string name="date">Date:</string>
+    <string name="customerName">Customer:</string>
+    <string name="employeeName">Employee:</string>
+    <string name="itemsScanned">Items Scanned:</string>
+    <string name="totalEarned">Total Earned:</string>
 </resources>
