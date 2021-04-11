@@ -24,6 +24,6 @@ public class StartPage extends AppCompatActivity implements View.OnClickListener
         // go to the home page with an intent
         Intent toHome = new Intent(this, Home.class);
         StartPage.this.startActivity(toHome);
-//        StartPage.this.finish();
+        StartPage.this.finish();
     }
 }

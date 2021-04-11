@@ -26,13 +26,18 @@ public class Home extends AppCompatActivity {
     // set up variables
     public static String date = currentTime.toString();
     public static int scanCount = 0;
-    static double PRICE = 0.1;
+    public static double PRICE = 0.1;
     public static double total = scanCount * PRICE;
+    // string information
+    public static String customerName = "";
+    public static String employeeName = "";
+    public static String emailAddress = "";
     // array to hold all the scanned items
     public static String[] scannedItems = new String[10];
     // set up variables for input and display
     Button scanButton;
     Button emailButton;
+    Button clearButton;
     TextView dateLabel;
     TextView itemsScannedLabel;
     TextView totalEarnedLabel;
@@ -44,7 +49,6 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Log.d("Status", date);
 
         // set up text view label
         dateLabel = findViewById(R.id.dateLabel);
@@ -55,13 +59,18 @@ public class Home extends AppCompatActivity {
         totalEarnedLabel.setText(String.format("$ %.2f", total));
         // edit text
         emailEditText = findViewById(R.id.editTextEmailAddress);
+        emailEditText.setText(emailAddress);
         customerNameEditText = findViewById(R.id.editTextCustomerName);
+        customerNameEditText.setText(customerName);
         employeeNameEditText = findViewById(R.id.editTextEmployeeName);
+        employeeNameEditText.setText(employeeName);
         // set up buttons
         scanButton = findViewById(R.id.scanButton);
         scanButton.setOnClickListener(this::onClickScan);
         emailButton = findViewById(R.id.emailButton);
         emailButton.setOnClickListener(this::onClickEmail);
+        clearButton = findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(this::onClickClear);
     }
 
     public void onClickScan(View v) {
@@ -70,6 +79,27 @@ public class Home extends AppCompatActivity {
 
     public void onClickEmail(View v) {
         sendEmail();
+    }
+
+    public void onClickClear(View v) {
+        clear();
+    }
+
+    private void clear() {
+        // clear all the values
+        dateLabel.setText(Calendar.getInstance().getTime().toString());
+        customerNameEditText.setText("");
+        employeeNameEditText.setText("");
+        scanCount = 0;
+        total = PRICE * scanCount;
+        emailEditText.setText("");
+
+        // we can't count any more bottles, go back to home, toast a warning to close out
+        Intent backToHome = new Intent(Home.this, Home.class);
+        Home.this.startActivity(backToHome);
+        Home.this.finish();
+        // if nothing has been scanned, and user goes back
+        Toast.makeText(this, "Cleared all data!", Toast.LENGTH_LONG).show();
     }
 
     private void scanCode() {
@@ -102,7 +132,7 @@ public class Home extends AppCompatActivity {
             message += "\n\nCustomer Name: " + customerNameEditText.getText().toString();
             message += "\nEmployee Name: " + employeeNameEditText.getText().toString();
             message += "\nItems Scanned: " + scanCount;
-            message += "\nTotal Earned: " + total;
+            message += "\nTotal Earned: $" + total;
             message += "\n\nPlease pay the customer $"+total+" with a smile!";
 
             Intent email = new Intent(Intent.ACTION_SEND);
@@ -117,8 +147,6 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    // TODO: On email sent
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -130,8 +158,12 @@ public class Home extends AppCompatActivity {
                     scannedItems[scanCount] = result.getContents();
                     Log.d("Status array", scannedItems[scanCount]);
                     // see how many we have counted
+                    // setting these variables up will also help us retain all the information which can be lost
                     scanCount++;
                     total = scanCount * PRICE;
+                    emailAddress = emailEditText.getText().toString();
+                    customerName = customerNameEditText.getText().toString();
+                    employeeName = employeeNameEditText.getText().toString();
                     // show a alert to see if the user want's to continue or is done
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Continue scanning?");
@@ -147,6 +179,7 @@ public class Home extends AppCompatActivity {
                             // user is done
                             Intent backToHome = new Intent(Home.this, Home.class);
                             Home.this.startActivity(backToHome);
+                            Home.this.finish();
                         }
                     });
                     AlertDialog dialog = builder.create();
@@ -184,6 +217,7 @@ public class Home extends AppCompatActivity {
                                 // user is done
                                 Intent backToHome = new Intent(Home.this, Home.class);
                                 Home.this.startActivity(backToHome);
+                                Home.this.finish();
                             }
                         });
                         AlertDialog dialog = builder.create();
@@ -193,8 +227,12 @@ public class Home extends AppCompatActivity {
                         scannedItems[scanCount] = result.getContents();
                         Log.d("Status array", scannedItems[scanCount]);
                         // see how many we have counted, see the total
+                        // setting these variables up will also help us retain all the information which can be lost
                         scanCount++;
                         total = scanCount * PRICE;
+                        emailAddress = emailEditText.getText().toString();
+                        customerName = customerNameEditText.getText().toString();
+                        employeeName = employeeNameEditText.getText().toString();
                         // show a alert to see if the user want's to continue or is done
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setTitle("Continue scanning?");
@@ -210,6 +248,7 @@ public class Home extends AppCompatActivity {
                                 // user is done
                                 Intent backToHome = new Intent(Home.this, Home.class);
                                 Home.this.startActivity(backToHome);
+                                Home.this.finish();
                             }
                         });
                         AlertDialog dialog = builder.create();

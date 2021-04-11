@@ -5,6 +5,7 @@
     <string name="R">R</string>
     <string name="scan">Scan</string>
     <string name="start">Start</string>
+    <string name="clear">Clear</string>
     <string name="emailAddress">Email To:</string>
     <string name="email">Email</string>
     <string name="date">Date:</string>
