@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +29,7 @@ public class Home extends AppCompatActivity {
     static double PRICE = 0.1;
     public static double total = scanCount * PRICE;
     // array to hold all the scanned items
-    public static String[] scannedItems = new String[100];
+    public static String[] scannedItems = new String[10];
     // set up variables for input and display
     Button scanButton;
     Button emailButton;
@@ -51,7 +52,11 @@ public class Home extends AppCompatActivity {
         itemsScannedLabel = findViewById(R.id.itemsScannedLabel);
         itemsScannedLabel.setText(String.valueOf(scanCount));
         totalEarnedLabel = findViewById(R.id.totalEarnedLabel);
-        totalEarnedLabel.setText(String.format("$ %s", total));
+        totalEarnedLabel.setText(String.format("$ %.2f", total));
+        // edit text
+        emailEditText = findViewById(R.id.editTextEmailAddress);
+        customerNameEditText = findViewById(R.id.editTextCustomerName);
+        employeeNameEditText = findViewById(R.id.editTextEmployeeName);
         // set up buttons
         scanButton = findViewById(R.id.scanButton);
         scanButton.setOnClickListener(this::onClickScan);
@@ -64,7 +69,7 @@ public class Home extends AppCompatActivity {
     }
 
     public void onClickEmail(View v) {
-        Log.d("Status", "Email Clicked!");
+        sendEmail();
     }
 
     private void scanCode() {
@@ -76,34 +81,145 @@ public class Home extends AppCompatActivity {
         integrator.initiateScan();
     }
 
+    private void sendEmail() {
+        // if we are sending email, check if the email to send is provided
+        if (scanCount == 0) {
+            // if null send a error message
+            Toast.makeText(Home.this, "Nothing scanned to pay!", Toast.LENGTH_SHORT).show();
+        } else if (customerNameEditText.getText().toString().equals("")) {
+            // if null send a error message
+            Toast.makeText(Home.this, "Empty customer name provided.", Toast.LENGTH_SHORT).show();
+        } else if (employeeNameEditText.getText().toString().equals("")) {
+            // if null send a error message
+            Toast.makeText(Home.this, "Empty employee name provided.", Toast.LENGTH_SHORT).show();
+        } else if (emailEditText.getText().toString().equals("")) {
+            // if null send a error message
+            Toast.makeText(Home.this, "Empty email provided.", Toast.LENGTH_SHORT).show();
+        } else {
+            String to = emailEditText.getText().toString();
+            String subject="Ashfield North News - Total Returned";
+            String message="Receipt time: " + date;
+            message += "\n\nCustomer Name: " + customerNameEditText.getText().toString();
+            message += "\nEmployee Name: " + employeeNameEditText.getText().toString();
+            message += "\nItems Scanned: " + scanCount;
+            message += "\nTotal Earned: " + total;
+            message += "\n\nPlease pay the customer $"+total+" with a smile!";
+
+            Intent email = new Intent(Intent.ACTION_SEND);
+            email.putExtra(Intent.EXTRA_EMAIL, new String[]{ to });
+            email.putExtra(Intent.EXTRA_SUBJECT, subject);
+            email.putExtra(Intent.EXTRA_TEXT, message);
+
+            //need this to prompts email client only
+            email.setType("message/rfc822");
+
+            startActivity(Intent.createChooser(email, "Choose an Email client :"));
+        }
+    }
+
+    // TODO: On email sent
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder((this));
-//                builder.setMessage(result.getContents());
-                scanCount++;
-                builder.setMessage("Scanned " + scanCount + " items.");
-                builder.setTitle("Scanning Result");
-//                builder.setPositiveButton("Scan Again", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        scanCode();
-//                    }
-//                }).setNegativeButton("Finish", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-////                        finish();
-////                        Intent backToHome = new Intent(Home.this, Home.class);
-////                        Home.this.startActivity(backToHome);
-////                        Home.this.finish();
-//                    }
-//                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                // if this is the first scan, we don't need to see if this bar code was already scanned
+                if (scanCount == 0) {
+                    // we scanned something, we want to store the scanned string into an array
+                    scannedItems[scanCount] = result.getContents();
+                    Log.d("Status array", scannedItems[scanCount]);
+                    // see how many we have counted
+                    scanCount++;
+                    total = scanCount * PRICE;
+                    // show a alert to see if the user want's to continue or is done
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Continue scanning?");
+                    builder.setPositiveButton("Scan Again", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // user want's to scan again
+                            scanCode();
+                        }
+                    }).setNegativeButton("Done", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // user is done
+                            Intent backToHome = new Intent(Home.this, Home.class);
+                            Home.this.startActivity(backToHome);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else if (scanCount == scannedItems.length) {
+                    // we can't count any more bottles, go back to home, toast a warning to close out
+                    Intent backToHome = new Intent(Home.this, Home.class);
+                    Home.this.startActivity(backToHome);
+                    // if nothing has been scanned, and user goes back
+                    Toast.makeText(this, "Scanning Limit reached. Please start a new order.", Toast.LENGTH_LONG).show();
+                } else {
+                    // check if this scanned bar code was already scanned
+                    boolean flag = false;
+                    for (int i = 0; i < scannedItems.length; i++) {
+                        if (result.getContents().equals(scannedItems[i])) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    // check for flag
+                    if (flag) {
+                        // show a alert to the user saying this was already scanned
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle("Error Scanning?");
+                        builder.setMessage("Barcode already Scanned.");
+                        builder.setPositiveButton("Scan Again", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // user want's to scan again
+                                scanCode();
+                            }
+                        }).setNegativeButton("Done", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // user is done
+                                Intent backToHome = new Intent(Home.this, Home.class);
+                                Home.this.startActivity(backToHome);
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        // we scanned something, we want to store the scanned string into an array
+                        scannedItems[scanCount] = result.getContents();
+                        Log.d("Status array", scannedItems[scanCount]);
+                        // see how many we have counted, see the total
+                        scanCount++;
+                        total = scanCount * PRICE;
+                        // show a alert to see if the user want's to continue or is done
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle("Continue scanning?");
+                        builder.setPositiveButton("Scan Again", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // user want's to scan again
+                                scanCode();
+                            }
+                        }).setNegativeButton("Done", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // user is done
+                                Intent backToHome = new Intent(Home.this, Home.class);
+                                Home.this.startActivity(backToHome);
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }
             } else {
-                Toast.makeText(this, "No Results", Toast.LENGTH_LONG).show();
+                // if nothing has been scanned, and user goes back
+                if (scanCount == 0)
+                    Toast.makeText(this, "No Results!", Toast.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
