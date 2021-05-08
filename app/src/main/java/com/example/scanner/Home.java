@@ -86,6 +86,8 @@ public class Home extends AppCompatActivity {
     }
 
     private void clear() {
+        customerName = "";
+        employeeName = "";
         // clear all the values
         dateLabel.setText(Calendar.getInstance().getTime().toString());
         customerNameEditText.setText("");
