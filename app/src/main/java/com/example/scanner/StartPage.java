@@ -15,6 +15,12 @@ public class StartPage extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_page);
 
+        // 1
+        int a = 5;
+        // 2
+        int b;
+        b = 5;
+
         startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(this);
     }
